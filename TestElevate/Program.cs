@@ -63,7 +63,7 @@ namespace TestElevate
                 password = Console.ReadLine();
 
                 //SetRegistry(username, password);
-                Console.WriteLine("Registry is now configured for autologon with username: " + username);
+                Console.WriteLine("Registry is now configured for autologon bla with username: " + username);
             }
 
             else
