@@ -41,10 +41,16 @@ namespace TestElevate
             
         }
 
-        public static string ReadRegistry(string text)
+        public static void ReadRegistry()
 
         {
-            return text;
+            Microsoft.Win32.RegistryKey key;
+
+            string value = "";
+            key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\AutoAdminLogon");
+            value = key.GetValue().ToString();
+            Console.WriteLine(value);
+            key.Close();
         }
 
 
@@ -62,14 +68,14 @@ namespace TestElevate
                 Console.WriteLine("Password:");
                 password = Console.ReadLine();
 
-                //SetRegistry(username, password);
+                SetRegistry(username, password);
                 Console.WriteLine("Registry is now configured for autologon with username: " + username);
             }
 
             else
 
             {
-                Console.WriteLine(ReadRegistry("Hej!"));
+                ReadRegistry();
                 Console.WriteLine("Press C to configure autologon");
                 answer = Console.ReadLine();
                 
