@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace TestElevate
 {
@@ -32,25 +33,23 @@ namespace TestElevate
         public static void SetRegistry(string un, string pw)
 
         {
-
-            Microsoft.Win32.RegistryKey key;
-
-            key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\AutoAdminLogon");
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\AutoAdminLogon");
             key.SetValue("AutoAdminLogon", "1");
             key.Close();
             
         }
 
-        public static void ReadRegistry()
+        public static string ReadRegistry()
 
         {
-            Microsoft.Win32.RegistryKey key;
-
-            string value = "";
-            key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\AutoAdminLogon");
-            value = key.GetValue().ToString();
-            Console.WriteLine(value);
+           
+            string isConfigured;
+            RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
+            key = key.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon");
+            isConfigured= key.GetValue("AutoAdminLogon").ToString();          
             key.Close();
+            return isConfigured;      
+          
         }
 
 
@@ -76,6 +75,7 @@ namespace TestElevate
 
             {
                 ReadRegistry();
+                Console.WriteLine(ReadRegistry());
                 Console.WriteLine("Press C to configure autologon");
                 answer = Console.ReadLine();
                 
