@@ -9,7 +9,12 @@ using Microsoft.Win32;
 namespace TestElevate
 {
     class Program
-    {        
+    {
+
+        static string defaultUserName = "";
+        static string defaultDomain = "";
+        static string isConfigured;
+
         public static void ExecuteAsAdmin(string path)
         {
             try
@@ -33,23 +38,48 @@ namespace TestElevate
         public static void SetRegistry(string un, string pw)
 
         {
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\AutoAdminLogon");
-            key.SetValue("AutoAdminLogon", "1");
-            key.Close();
-            
+            try
+
+            {
+                //RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon");
+                RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
+                key = key.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon", true);
+                key.SetValue("AutoAdminLogon", "1");
+                key.SetValue("ForceAutologon", "1");
+                key.SetValue("DefaultUserName", un);
+                key.SetValue("DefaultPassword", pw);
+                key.SetValue("DefaultDomain", "enfogroup.com");
+
+                key.Close();
+            }
+
+            catch (Exception ex)
+
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
+            }
         }
 
         public static string ReadRegistry()
 
         {
            
-            string isConfigured;
+            //string isConfigured;
             RegistryKey key = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
             key = key.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon");
-            isConfigured= key.GetValue("AutoAdminLogon").ToString();          
+            isConfigured= key.GetValue("AutoAdminLogon").ToString();
+            defaultUserName = key.GetValue("DefaultUserName").ToString();
+            defaultDomain = key.GetValue("DefaultDomain").ToString();
             key.Close();
             return isConfigured;      
           
+        }
+
+        public static void Exit()
+
+        {
+            Environment.Exit(0);
         }
 
 
@@ -69,14 +99,27 @@ namespace TestElevate
 
                 SetRegistry(username, password);
                 Console.WriteLine("Registry is now configured for autologon with username: " + username);
+                Console.WriteLine("Press any key to exit");
+                Console.ReadKey();
+                Environment.Exit(0);
             }
 
             else
 
             {
                 ReadRegistry();
-                Console.WriteLine(ReadRegistry());
-                Console.WriteLine("Press C to configure autologon");
+                if  (isConfigured == "1")
+
+
+                    //Console.WriteLine(ReadRegistry());
+
+                    Console.WriteLine($"This computer is configured for autologon for \nUsername: {defaultUserName} \nDomain: {defaultDomain}");
+
+                else
+                    Console.WriteLine($"This computer is not configured for autologon");
+
+
+                Console.WriteLine("\nPress C if you want to configure autologon or any other key to exit");
                 answer = Console.ReadLine();
                 
 
@@ -85,6 +128,9 @@ namespace TestElevate
                 {  
                     ExecuteAsAdmin(exeName);
                 }
+
+                else
+                    Exit();
             }
         }
     }
