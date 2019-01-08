@@ -67,7 +67,7 @@ namespace TestElevate
             key = key.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon");
             isConfigured= key.GetValue("AutoAdminLogon").ToString();
             defaultUserName = key.GetValue("DefaultUserName").ToString();
-            defaultDomain = key.GetValue("DefaultDomain").ToString();
+            defaultDomain = key.GetValue("DefaultDomainName").ToString();
             key.Close();
             return isConfigured;             
         }
