@@ -48,7 +48,7 @@ namespace TestElevate
                 key.SetValue("ForceAutologon", "1");
                 key.SetValue("DefaultUserName", un);
                 key.SetValue("DefaultPassword", pw);
-                key.SetValue("DefaultDomain", "enfogroup.com");
+                key.SetValue("DefaultDomainName", "enfogroup.com");
                 key.Close();
             }
 
